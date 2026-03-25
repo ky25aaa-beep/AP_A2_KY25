@@ -1,0 +1,178 @@
+import json
+import os
+import random
+import sys
+import keyboard 
+from main import logout_staff
+
+#json to dict of item_no -> item, and list of drinks
+def load_menu(path='menu.json'):
+    with open(path, 'r') as f:
+        menu = json.load(f)
+    items = {}
+    drinks = []
+    # flatten menu into item_no -> item dict 
+    if 'food' in menu:
+        for category, lst in menu['food'].items():
+            for it in lst:
+                it_copy = it.copy()
+                it_copy['category'] = category
+                items[it['item_no']] = it_copy
+    if 'drinks' in menu:
+        for dcat, lst in menu['drinks'].items():
+            for it in lst:
+                it_copy = it.copy()
+                it_copy['category'] = 'drink'
+                it_copy['drink_type'] = dcat
+                items[it['item_no']] = it_copy
+                drinks.append(it_copy)
+    return menu, items, drinks
+
+
+
+def print_menu(menu):
+    print('\nMenu:')
+    if 'food' in menu:
+        for section in ['pizzas', 'sides']:
+            if section in menu['food']:
+                print(f"\n{section.capitalize()}:")
+                for it in menu['food'][section]:
+                    print(f"{it['item_no']}: {it['name']} - {it['description']} (£ {it['price']:.2f})")
+    if 'drinks' in menu:
+        print('\nDrinks:')
+        for dcat, lst in menu['drinks'].items():
+            print(f"  {dcat.capitalize()}:")
+            for it in lst:
+                print(f"    {it['item_no']}: {it['name']} - {it['description']} (£ {it['price']:.2f})")
+
+
+def input_int(prompt, min_val=None, max_val=None):
+    while True:
+        try:
+            val = int(input(prompt).strip())
+            if min_val is not None and val < min_val and max_val is not None and val > max_val:
+                print(f"Enter a number between {min_val} and {max_val}.")
+                continue
+            if min_val is not None and val < min_val:
+                print(f"Enter a number >= {min_val}.")
+                continue
+            if max_val is not None and val > max_val:
+                print(f"Enter a number <= {max_val}.")
+                continue
+            return val
+        except ValueError:
+            print("Please enter a valid integer.")
+
+
+
+def get_order_for_person(person_no, items):
+    print(f"\nEntering order for Person {person_no}.")
+    print("Enter item numbers separated by commas (e.g. 1,4,7). Enter blank when done.")
+    order = []
+    while True:
+        raw = input("Items: ").strip()
+        if raw == '':
+            break
+        parts = [p.strip() for p in raw.split(',') if p.strip()]
+        for p in parts:
+            if not p.isdigit():
+                print(f"'{p}' is not a valid item number.")
+                continue
+            no = int(p)
+            if no not in items:
+                print(f"Item number {no} not found.")
+                continue
+            order.append(no)
+        print(f"Current items: {order}. Add more or press Enter to finish.")
+    return order
+
+
+def order_has_drink(order, items):
+    for no in order:
+        it = items.get(no)
+        if it and it.get('category') == 'drink' or it.get('drink_type'):
+            return True
+    return False
+
+
+def suggest_drink(drinks):
+    return random.choice(drinks) if drinks else None
+
+
+def print_receipt(table_no, all_orders, items, server_name='Marina Nash'):
+    print('\n' + '-' * 54)
+    print('------- The Spectra Pizzeria -------')
+    print(f'Table {table_no}')
+    print('-' * 54)
+    total_table = 0.0
+    for idx, order in enumerate(all_orders, start=1):
+        print(f"Person {idx} Price")
+        total = 0.0
+        if not order:
+            print('  No items ordered')
+        for no in order:
+            it = items.get(no)
+            if it:
+                print(f" {it['name']} £ {it['price']:.2f}")
+                total += float(it['price'])
+        print(f" Total £ {total:.2f}\n")
+        total_table += total
+    print(f"Total for the table: £ {total_table:.2f}")
+    print(f"Your server is: {server_name}")
+    print('Enjoy your meal! Remember to recommend us to friends and family.')
+
+
+def main():
+    try:
+        menu, items, drinks = load_menu('menu.json')
+    except FileNotFoundError:
+        print('menu.json not found in current directory.')
+        sys.exit(1)
+
+    print('Welcome to The Spectra Pizzeria!')
+    while True: #loop until valid table number and confirmation
+        table_no = input_int('Enter table number (tables open today: 1-143): ', min_val=1, max_val=143)
+        confirm = input(f"You entered table number {table_no}. Is this correct? (yes/no): ").strip().lower()
+        if confirm in ('yes', 'y'):
+            break
+        else:
+            print("Let's try again.")
+        
+
+        
+    num_people = input_int('Enter number of people at the table: ', min_val=1)
+
+    print_menu(menu)
+
+    all_orders = []
+    for p in range(1, num_people + 1):
+        order = get_order_for_person(p, items)
+        if not order:
+            print('No items added. You can still add suggestions.')
+        if not order_has_drink(order, items):
+            suggestion = suggest_drink(drinks)
+            if suggestion:
+                ans = input(f"Suggest drink: {suggestion['name']} (£ {suggestion['price']:.2f}). Add to order? (yes/no): ").strip().lower()
+                if ans in ('yes', 'y'):
+                    order.append(suggestion['item_no'])
+        all_orders.append(order)
+
+    print_receipt(table_no, all_orders, items)
+#logout staff when order.py eits also interpret ctrl+x as logout
+def exit_handler():
+    print("\nLogging out...")
+    logout_staff(staff_id)
+    print("Logged out successfully. Goodbye!")
+    os._exit(0)
+
+
+if __name__ == '__main__':
+    #get staff id from cmd args, if not provided, exit with error
+    if len(sys.argv) < 2:
+        print("Staff ID not provided. Usage: python order.py <staff_id>")
+        sys.exit(1)
+    print("Logout at any time by typing 'pressing ctrl+x or closing the window'.")
+    keyboard.add_hotkey('ctrl + x', exit_handler) 
+
+    staff_id = sys.argv[1]
+    main()

@@ -1,0 +1,132 @@
+
+{
+	"restaurant": "The Spectra Pizzeria",
+	"food": {
+		"pizzas": [
+			{
+				"item_no": 1,
+				"name": "Margherita",
+				"description": "Tomato sauce, mozzarella, fresh basil",
+				"price": 9.00
+			},
+			{
+				"item_no": 2,
+				"name": "Pepperoni",
+				"description": "Tomato sauce, mozzarella, spicy pepperoni",
+				"price": 11.50
+			},
+			{
+				"item_no": 3,
+				"name": "Roast Vegetable",
+				"description": "Tomato sauce, mozzarella, seasonal roasted vegetables",
+				"price": 10.50
+			}
+		],
+		"sides": [
+			{
+				"item_no": 4,
+				"name": "Side Salad",
+				"description": "Mixed leaves, cherry tomatoes, vinaigrette",
+				"price": 5.50
+			},
+			{
+				"item_no": 5,
+				"name": "Garlic Bread",
+				"description": "Ciabatta with garlic butter and parsley",
+				"price": 4.00
+			},
+			{
+				"item_no": 6,
+				"name": "Roast Vegetable Side",
+				"description": "Oven-roasted seasonal vegetables",
+				"price": 3.50
+			},
+			{
+				"item_no": 7,
+				"name": "Fries",
+				"description": "Crispy golden fries, cooked to perfection",
+				"price": 6.50
+			}
+		]
+	},
+	"drinks": {
+		"soft": [
+			{
+				"item_no": 8,
+				"name": "Coke",
+				"description": "330ml can",
+				"price": 2.00
+			},
+			{
+				"item_no": 9,
+				"name": "Fanta",
+				"description": "330ml can",
+				"price": 2.00
+			},
+			{
+				"item_no": 10,
+				"name": "Water",
+				"description": "Still water 330ml",
+				"price": 1.00
+			},
+			{
+				"item_no": 11,
+				"name": "Lemonade",
+				"description": "330ml can",
+				"price": 2.00
+			},
+			{
+				"item_no": 12,
+				"name": "Ice",
+				"description": "Crushed Ice (100g)",
+				"price": 2.25
+			}
+		],
+		"hard": [
+			{
+				"item_no": 13,
+				"name": "Beer",
+				"description": "500ml lager",
+				"price": 4.50
+			},
+			{
+				"item_no": 14,
+				"name": "House Wine",
+				"description": "125ml glass of house red or white",
+				"price": 5.00
+			},
+			{
+				"item_no": 15,
+				"name": "Whisky",
+				"description": "Single measure spirit",
+				"price": 4.00
+			},
+			{
+				"item_no": 16,
+				"name": "mastique",
+				"description": "A traditional greek spirit with a unique flavour profile",
+				"price": 6.50
+			}
+		],
+		"hot": [
+			{
+				"item_no": 17,
+				"name": "Coffee",
+				"description": "Freshly brewed espresso or americano",
+				"price": 2.50
+			},
+			{
+				"item_no": 18,
+				"name": "Tea",
+				"description": "English breakfast tea",
+				"price": 2.00
+			},
+			{
+				"item_no": 19,
+				"name": "Bovrill",
+				"description": "Rich hot Bovrill",
+				"price": 6.50
+			}
+		]
+	}
+}
