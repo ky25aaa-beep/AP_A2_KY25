@@ -1,7 +1,7 @@
 
 {
 	"restaurant": "The Spectra Pizzeria",
-	"food": {
+	"foodstuffs": {
 		"pizzas": [
 			{
 				"item_no": 1,

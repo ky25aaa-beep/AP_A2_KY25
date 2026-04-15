@@ -1,49 +1,49 @@
-import json
-import os
-import random
-import sys
-import keyboard 
-from main import logout_staff
+import json # for json handling
+import os # for exiting the program
+import random # for the random drink selection
+import sys # for interpretting parameters from the main program when executing orders
+import keyboard # for grabbing the keyboard shortcut for logging out
+from main import logout_staff #import logout function from main 
 
 #json to dict of item_no -> item, and list of drinks
-def load_menu(path='menu.json'):
+def load_menu(path='menu.json'): # defines a program for loading the menu 
     with open(path, 'r') as f:
         menu = json.load(f)
-    items = {}
+    items = {} # items list 
     drinks = []
     # flatten menu into item_no -> item dict 
-    if 'food' in menu:
-        for category, lst in menu['food'].items():
-            for it in lst:
-                it_copy = it.copy()
-                it_copy['category'] = category
-                items[it['item_no']] = it_copy
+    if 'foodstuffs' in menu:
+        for category, list in menu['foodstuffs'].items():
+            for item in list:
+                item_copy = item.copy()
+                item_copy['category'] = category
+                items[item['item_no']] = item_copy
     if 'drinks' in menu:
-        for dcat, lst in menu['drinks'].items():
-            for it in lst:
-                it_copy = it.copy()
-                it_copy['category'] = 'drink'
-                it_copy['drink_type'] = dcat
-                items[it['item_no']] = it_copy
-                drinks.append(it_copy)
+        for dcat, list in menu['drinks'].items():
+            for it in list:
+                item_copy = it.copy()
+                item_copy['category'] = 'drink'
+                item_copy['drink_type'] = dcat
+                items[it['item_no']] = item_copy
+                drinks.append(item_copy)
     return menu, items, drinks
 
 
 
 def print_menu(menu):
     print('\nMenu:')
-    if 'food' in menu:
+    if 'foodstuffs' in menu:
         for section in ['pizzas', 'sides']:
-            if section in menu['food']:
+            if section in menu['foodstuffs']:
                 print(f"\n{section.capitalize()}:")
-                for it in menu['food'][section]:
-                    print(f"{it['item_no']}: {it['name']} - {it['description']} (£ {it['price']:.2f})")
+                for item in menu['foodstuffs'][section]:
+                    print(f"    {item['item_no']}: {item['name']} - {item['description']} (£ {item['price']:.2f})")
     if 'drinks' in menu:
         print('\nDrinks:')
-        for dcat, lst in menu['drinks'].items():
-            print(f"  {dcat.capitalize()}:")
-            for it in lst:
-                print(f"    {it['item_no']}: {it['name']} - {it['description']} (£ {it['price']:.2f})")
+        for drinkcategory, list in menu['drinks'].items():
+            print(f"  {drinkcategory.capitalize()}:")
+            for item in list:
+                print(f"    {item['item_no']}: {item['name']} - {item['description']} (£ {item['price']:.2f})")
 
 
 def input_int(prompt, min_val=None, max_val=None):
@@ -90,7 +90,7 @@ def get_order_for_person(person_no, items):
 def order_has_drink(order, items):
     for no in order:
         it = items.get(no)
-        if it and it.get('category') == 'drink' or it.get('drink_type'):
+        if it and (it.get('category') == 'drink' or it.get('drink_type')):
             return True
     return False
 
@@ -109,13 +109,13 @@ def print_receipt(table_no, all_orders, items, server_name='Marina Nash'):
         print(f"Person {idx} Price")
         total = 0.0
         if not order:
-            print('  No items ordered')
+            print(' No items ordered')
         for no in order:
             it = items.get(no)
             if it:
-                print(f" {it['name']} £ {it['price']:.2f}")
+                print(f"    {it['name']} £ {it['price']:.2f}")
                 total += float(it['price'])
-        print(f" Total £ {total:.2f}\n")
+        print(f"Total £ {total:.2f}\n")
         total_table += total
     print(f"Total for the table: £ {total_table:.2f}")
     print(f"Your server is: {server_name}")
