@@ -8,25 +8,26 @@ from main import logout_staff #import logout function from main
 #json to dict of item_no -> item, and list of drinks
 def load_menu(path='menu.json'): # defines a program for loading the menu 
     with open(path, 'r') as f:
-        menu = json.load(f)
-    items = {} # items list 
-    drinks = []
+        menu = json.load(f) # returns a dictionary or list. 
+    foodstuffs = {} # foodstuffs dictionary  
+    drinks = {} # drinks dictionary
     # flatten menu into item_no -> item dict 
     if 'foodstuffs' in menu:
         for category, list in menu['foodstuffs'].items():
             for item in list:
                 item_copy = item.copy()
                 item_copy['category'] = category
-                items[item['item_no']] = item_copy
+                foodstuffs[item['item_no']] = item_copy
+
     if 'drinks' in menu:
-        for dcat, list in menu['drinks'].items():
-            for it in list:
-                item_copy = it.copy()
+        for drink_category, list in menu['drinks'].items():
+            for item in list:
+                item_copy = item.copy()
                 item_copy['category'] = 'drink'
-                item_copy['drink_type'] = dcat
-                items[it['item_no']] = item_copy
-                drinks.append(item_copy)
-    return menu, items, drinks
+                item_copy['drink_type'] = drink_category
+                drinks[item['item_no']] = item_copy
+
+    return menu, foodstuffs, drinks
 
 
 
@@ -50,7 +51,7 @@ def input_int(prompt, min_val=None, max_val=None):
     while True:
         try:
             val = int(input(prompt).strip())
-            if min_val is not None and val < min_val and max_val is not None and val > max_val:
+            if min_val is not None and max_val is not None and not (min_val <= val <= max_val):                
                 print(f"Enter a number between {min_val} and {max_val}.")
                 continue
             if min_val is not None and val < min_val:
@@ -78,26 +79,25 @@ def get_order_for_person(person_no, items):
             if not p.isdigit():
                 print(f"'{p}' is not a valid item number.")
                 continue
-            no = int(p)
-            if no not in items:
-                print(f"Item number {no} not found.")
+            number = int(p)
+            if number not in items:
+                print(f"Item number {number} not found.")
                 continue
-            order.append(no)
+            order.append(number)
         print(f"Current items: {order}. Add more or press Enter to finish.")
     return order
 
 
 def order_has_drink(order, items):
-    for no in order:
-        items = items.get(no)
-        if items and (items.get('category') == 'drink' or items.get('drink_type')):
+    for number in order:
+        item = items.get(number)
+        if item and (item.get('category') == 'drink' or item.get('drink_type')):
             return True
     return False
 
 
 def suggest_drink(drinks):
-    return random.choice(drinks) if drinks else None
-
+    return random.choice(list(drinks.values())) if drinks else None
 
 def print_receipt(table_no, all_orders, items, server_name='Marina Nash'):
     print('\n' + '-' * 54)
@@ -110,8 +110,8 @@ def print_receipt(table_no, all_orders, items, server_name='Marina Nash'):
         total = 0.0
         if not order:
             print(' No items ordered')
-        for no in order:
-            it = items.get(no)
+        for number in order:
+            it = items.get(number)
             if it:
                 print(f"    {it['name']} £ {it['price']:.2f}")
                 total += float(it['price'])
@@ -124,7 +124,8 @@ def print_receipt(table_no, all_orders, items, server_name='Marina Nash'):
 
 def main():
     try:
-        menu, items, drinks = load_menu('menu.json')
+        menu, foodstuffs, drinks = load_menu('menu.json')
+        all_items = {**foodstuffs, **drinks}
     except FileNotFoundError:
         print('menu.json not found in current directory.')
         sys.exit(1)
@@ -146,10 +147,10 @@ def main():
 
     all_orders = []
     for p in range(1, num_people + 1):
-        order = get_order_for_person(p, items)
+        order = get_order_for_person(p, all_items)
         if not order:
             print('No items added. You can still add suggestions.')
-        if not order_has_drink(order, items):
+        if not order_has_drink(order, all_items):
             suggestion = suggest_drink(drinks)
             if suggestion:
                 ans = input(f"Suggest drink: {suggestion['name']} (£ {suggestion['price']:.2f}). Add to order? (yes/no): ").strip().lower()
@@ -157,7 +158,7 @@ def main():
                     order.append(suggestion['item_no'])
         all_orders.append(order)
 
-    print_receipt(table_no, all_orders, items)
+    print_receipt(table_no, all_orders, all_items)
 #logout staff when order.py eits also interpret ctrl+x as logout
 def exit_handler():
     print("\nLogging out...")
