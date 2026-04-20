@@ -6,7 +6,7 @@ import keyboard # for grabbing the keyboard shortcut for logging out
 from main import logout_staff #import logout function from main 
 
 #json to dict of item_no -> item, and list of drinks
-def load_menu(path='menu.json'): # defines a program for loading the menu 
+def load_menu(path): # defines a program for loading the menu 
     with open(path, 'r') as f:
         menu = json.load(f) # returns a dictionary or list. 
     foodstuffs = {} # foodstuffs dictionary  
