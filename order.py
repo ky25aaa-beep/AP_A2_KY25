@@ -89,8 +89,8 @@ def get_order_for_person(person_no, items):
 
 def order_has_drink(order, items):
     for no in order:
-        it = items.get(no)
-        if it and (it.get('category') == 'drink' or it.get('drink_type')):
+        items = items.get(no)
+        if items and (items.get('category') == 'drink' or items.get('drink_type')):
             return True
     return False
 
