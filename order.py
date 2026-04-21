@@ -5,6 +5,9 @@ import sys # for interpretting parameters from the main program when executing o
 import keyboard # for grabbing the keyboard shortcut for logging out
 from main import load_json_file, logout_staff #import logout function from main 
 
+
+# This function handles the importing of the menu - this enables the program to meet the requirement of having a menu and it contain pizzas, sides, and a selection of drinks
+
 #json to dict of item_no -> item, and list of drinks
 def load_menu(path): # defines a program for loading the menu 
     with open(path, 'r') as f:
@@ -30,7 +33,7 @@ def load_menu(path): # defines a program for loading the menu
     return menu, foodstuffs, drinks
 
 
-
+# This fullfills the requirement of each item on the menu displaying a unique number, name, description and price. It also allows the staff to select items by their unique number, which is more efficient than typing out the full name of the item. The unique number also allows for easy referencing in the order and receipt generation process.
 def print_menu(menu):
     print('\nMenu:')
     if 'foodstuffs' in menu:
@@ -47,6 +50,7 @@ def print_menu(menu):
                 print(f"    {item['item_no']}: {item['name']} - {item['description']} (£ {item['price']:.2f})")
 
 
+# This is an addition to the requirements, it is a helper function for getting integer inputs with validation and optional min/max bounds. It is used for getting the table number and number of people at the table, ensuring that the inputs are valid integers and within expected ranges. This helps to prevent errors and improve the user experience when entering data.
 def input_int(prompt, min_val=None, max_val=None):
     while True:
         try:
@@ -65,6 +69,7 @@ def input_int(prompt, min_val=None, max_val=None):
             print("Please enter a valid integer.")
 
 
+# This fullfills the requirement of ordering for each person at the table, 
 
 def get_order_for_person(person_no, items):
     print(f"\nEntering order for Person {person_no}.")
@@ -79,7 +84,7 @@ def get_order_for_person(person_no, items):
             if not p.isdigit():
                 print(f"'{p}' is not a valid item number.")
                 continue
-            number = int(p)
+            number = int(p) 
             if number not in items:
                 print(f"Item number {number} not found.")
                 continue
@@ -88,6 +93,7 @@ def get_order_for_person(person_no, items):
     return order
 
 
+#This fullfills the requirement of suggesting a drink if no drink has been ordered, it checks if any item in the order is a drink by looking up the item number in the items dictionary and checking its category. If no drink is found, it randomly selects a drink from the drinks dictionary and suggests it to the user. This encourages upselling and can increase the total order value while also enhancing the customer experience by providing personalized suggestions.
 def order_has_drink(order, items):
     for number in order:
         item = items.get(number)
