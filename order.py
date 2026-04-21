@@ -3,7 +3,7 @@ import os # for exiting the program
 import random # for the random drink selection
 import sys # for interpretting parameters from the main program when executing orders
 import keyboard # for grabbing the keyboard shortcut for logging out
-from main import logout_staff #import logout function from main 
+from main import load_json_file, logout_staff #import logout function from main 
 
 #json to dict of item_no -> item, and list of drinks
 def load_menu(path): # defines a program for loading the menu 
@@ -99,7 +99,19 @@ def order_has_drink(order, items):
 def suggest_drink(drinks):
     return random.choice(list(drinks.values())) if drinks else None
 
-def print_receipt(table_no, all_orders, items, server_name='Marina Nash'):
+def get_server_name(staff_id):
+    #using credentials.json and the known staff id get the server name 
+    credentials = load_json_file('credentials.json', [])
+    for credential in credentials:
+        if credential.get('staff_id') == staff_id:
+            global server_name
+            server_name = credential.get('name')
+            return server_name
+    return "Unknown Server"
+
+
+def print_receipt(table_no, all_orders, items):
+    server_name = get_server_name(staff_id)
     print('\n' + '-' * 54)
     print('------- The Spectra Pizzeria -------')
     print(f'Table {table_no}')
@@ -174,6 +186,6 @@ if __name__ == '__main__':
         sys.exit(1)
     print("Logout at any time by typing 'pressing ctrl+x or closing the window'.")
     keyboard.add_hotkey('ctrl + x', exit_handler) 
-
+    global staff_id
     staff_id = sys.argv[1]
     main()
