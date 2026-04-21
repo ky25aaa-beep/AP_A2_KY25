@@ -110,7 +110,7 @@ def get_server_name(staff_id):
     return "Unknown Server"
 
 
-def print_receipt(table_no, all_orders, items):
+def print_receipt(table_no, all_orders, items, staff_id):
     server_name = get_server_name(staff_id)
     print('\n' + '-' * 54)
     print('------- The Spectra Pizzeria -------')
@@ -134,7 +134,7 @@ def print_receipt(table_no, all_orders, items):
     print('Enjoy your meal! Remember to recommend us to friends and family.')
 
 
-def main():
+def main(staff_id):
     try:
         menu, foodstuffs, drinks = load_menu('menu.json')
         all_items = {**foodstuffs, **drinks}
@@ -170,7 +170,9 @@ def main():
                     order.append(suggestion['item_no'])
         all_orders.append(order)
 
-    print_receipt(table_no, all_orders, all_items)
+    print_receipt(table_no, all_orders, all_items, staff_id)
+
+
 #logout staff when order.py eits also interpret ctrl+x as logout
 def exit_handler():
     print("\nLogging out...")
@@ -186,6 +188,5 @@ if __name__ == '__main__':
         sys.exit(1)
     print("Logout at any time by typing 'pressing ctrl+x or closing the window'.")
     keyboard.add_hotkey('ctrl + x', exit_handler) 
-    global staff_id
     staff_id = sys.argv[1]
-    main()
+    main(staff_id)
