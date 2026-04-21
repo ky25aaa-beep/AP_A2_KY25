@@ -100,11 +100,12 @@ def order_has_drink(order, items):
         if item and (item.get('category') == 'drink' or item.get('drink_type')):
             return True
     return False
-
-
+# ^
 def suggest_drink(drinks):
     return random.choice(list(drinks.values())) if drinks else None
 
+
+#fufills the requirement of printing a receipt with server name embedded into it
 def get_server_name(staff_id):
     #using credentials.json and the known staff id get the server name 
     credentials = load_json_file('credentials.json', [])
@@ -116,6 +117,7 @@ def get_server_name(staff_id):
     return "Unknown Server"
 
 
+#fullfills the requirement of printing a receipt with all the details, it takes the table number, all orders, items dictionary, and staff id as parameters. It calculates the total for each person and the total for the table, and prints out a formatted receipt that includes the server's name. This provides a clear and professional receipt for the customers, enhancing their dining experience and making it easy for them to see what they ordered and how much they owe.
 def print_receipt(table_no, all_orders, items, staff_id):
     server_name = get_server_name(staff_id)
     print('\n' + '-' * 54)
