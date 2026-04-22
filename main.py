@@ -27,6 +27,8 @@ def logout_staff(staff_id):
                 for sid in live_logins:
                     f.write(sid + '\n')
     return
+
+
 def save_json_file(path, data):
     with open(path, 'w') as f:
         json.dump(data, f, indent=2)
