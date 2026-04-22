@@ -47,7 +47,7 @@ def login_stage2(name, staff_id):
     if staff_id in live_logins:
         print("This staff ID is already logged in. Please try again later.")
         return False
-    if len(live_logins) < 1: #max 5 concurrent logins
+    if len(live_logins) < 1: #max 1 concurrent logins
         with open('live_logins.txt', 'a') as f:
             f.write(staff_id + '\n')
         # After successful login, run order.py pass staffid to order.py using cmd args, and remove staff id from live_logins.txt when order.py exits

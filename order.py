@@ -182,7 +182,7 @@ def main(staff_id):
 
 
 #logout staff when order.py eits also interpret ctrl+x as logout
-def exit_handler():
+def exit_handler(staff_id):
     print("\nLogging out...")
     logout_staff(staff_id)
     print("Logged out successfully. Goodbye!")
@@ -195,6 +195,7 @@ if __name__ == '__main__':
         print("Staff ID not provided. Usage: python order.py <staff_id>")
         sys.exit(1)
     print("Logout at any time by typing 'pressing ctrl+x or closing the window'.")
-    keyboard.add_hotkey('ctrl + x', exit_handler) 
     staff_id = sys.argv[1]
+
+    keyboard.add_hotkey('ctrl + x', lambda: exit_handler(staff_id)) # lambda allows adding a parameter to the function called by the hotkey
     main(staff_id)
